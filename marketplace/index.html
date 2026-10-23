@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ef4056" />
+  <title>دیجی‌مارکت | فروشگاه آنلاین</title>
+  <style>
+    /* ===================== Design Tokens (Digikala-like) ===================== */
+    :root{
+      --brand:#ef4056; --brand-dark:#d33748; --brand-light:#fff0f1;
+      --ok:#36b98e; --warn:#ff9e00; --info:#0d6cff;
+      --bg:#f6f6f8; --surface:#ffffff; --surface-2:#fafafa;
+      --text:#1a1a2e; --muted:#818188; --line:#e5e5ea;
+      --radius:14px; --shadow:0 2px 10px rgba(0,0,0,.06);
+      --shadow-lg:0 10px 30px rgba(0,0,0,.12);
+      --font:'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+    }
+    [data-theme="dark"]{
+      --bg:#101014; --surface:#1b1b22; --surface-2:#22222b;
+      --text:#ececf1; --muted:#9a9aa5; --line:#2c2c36;
+      --brand-light:#2a1418; --shadow:0 2px 10px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.7}
+    a{color:inherit;text-decoration:none}
+    button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+    input,select{font-family:inherit}
+
+    .container{max-width:1340px;margin-inline:auto;padding-inline:12px}
+    .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:10px;
+      padding:10px 18px;font-weight:700;transition:.2s}
+    .btn-primary{background:var(--brand);color:#fff}
+    .btn-primary:hover{background:var(--brand-dark);transform:translateY(-1px)}
+    .btn-outline{border:1.5px solid var(--brand);color:var(--brand)}
+    .btn-outline:hover{background:var(--brand-light)}
+    .badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700}
+    .badge-red{background:var(--brand);color:#fff}
+    .price-off{color:var(--brand);font-weight:800;font-size:12px}
+
+    /* ===================== Header ===================== */
+    .topbar{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+    .topbar-inner{display:flex;align-items:center;gap:14px;padding:10px 0}
+    .logo{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:900;color:var(--brand);white-space:nowrap}
+    .search{flex:1;display:flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    .search input{flex:1;border:none;background:none;padding:11px 14px;outline:none;color:var(--text);font-size:13px}
+    .search button{padding:0 16px;color:var(--muted)}
+    .header-actions{display:flex;gap:6px;align-items:center}
+    .icon-btn{position:relative;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;transition:.2s}
+    .icon-btn:hover{background:var(--brand-light);color:var(--brand)}
+    .count-dot{position:absolute;top:4px;left:4px;min-width:18px;height:18px;border-radius:9px;
+      background:var(--brand);color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;padding:0 4px}
+    .menu-btn{display:none}
+
+    /* ===================== Hero / Sliders ===================== */
+    .hero{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-top:14px}
+    .slider{position:relative;border-radius:18px;overflow:hidden;height:300px;touch-action:pan-y}
+    .slide{position:absolute;inset:0;opacity:0;transition:opacity .6s;display:flex;align-items:center;
+      justify-content:center;color:#fff;font-size:24px;font-weight:900;text-align:center;padding:20px;line-height:2}
+    .slide.active{opacity:1}
+    .s1{background:linear-gradient(135deg,#ef4056,#ff7b54)}
+    .s2{background:linear-gradient(135deg,#0d6cff,#6a5cff)}
+    .s3{background:linear-gradient(135deg,#111827,#374151)}
+    .slider-nav{position:absolute;bottom:12px;inset-inline:0;display:flex;justify-content:center;gap:8px}
+    .dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer}
+    .dot.on{background:#fff;width:22px;border-radius:6px}
+    .side-promo{display:grid;gap:14px}
+    .promo-mini{border-radius:18px;padding:18px;color:#fff;font-weight:800;display:flex;flex-direction:column;
+      justify-content:space-between;min-height:143px}
+    .pm1{background:linear-gradient(135deg,#36b98e,#0e9488)}
+    .pm2{background:linear-gradient(135deg,#ff9e00,#ef4056)}
+
+    /* ===================== Categories ===================== */
+    .cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin-top:16px;padding:16px}
+    .cat{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 4px;border-radius:14px;
+      transition:.2s;font-size:12px;font-weight:600;text-align:center;cursor:pointer}
+    .cat:hover{background:var(--brand-light);color:var(--brand);transform:translateY(-3px)}
+    .cat .emoji{font-size:30px}
+
+    /* ===================== Flash Sale ===================== */
+    .flash{margin-top:18px;background:linear-gradient(135deg,#171725,#2b1120);border-radius:18px;
+      padding:16px;color:#fff;overflow:hidden}
+    .flash-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+    .flash-title{display:flex;align-items:center;gap:10px;font-weight:900;font-size:17px}
+    .timer{display:flex;gap:6px;direction:ltr;align-items:center}
+    .timer span{background:#fff;color:#171725;font-weight:900;border-radius:8px;padding:5px 9px;
+      font-size:16px;min-width:40px;text-align:center}
+    .flash-scroll{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:8px}
+    .flash-scroll::-webkit-scrollbar{height:6px}
+    .flash-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3);border-radius:3px}
+    .flash .pcard{min-width:180px;scroll-snap-align:start;background:#fff;color:var(--text)}
+
+    /* ===================== Product Grid ===================== */
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px}
+    .section-head h2{font-size:19px;font-weight:900}
+    .see-all{color:var(--info);font-weight:700;font-size:13px}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+    .chip{padding:7px 14px;border-radius:20px;border:1px solid var(--line);background:var(--surface);
+      font-size:12.5px;font-weight:600;transition:.2s}
+    .chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .toolbar select{padding:8px 12px;border-radius:10px;border:1px solid var(--line);
+      background:var(--surface);color:var(--text);font-size:12.5px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+    .pcard{position:relative;padding:14px;display:flex;flex-direction:column;gap:8px;transition:.25s;cursor:pointer}
+    .pcard:hover{box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+    .pimg{height:150px;display:grid;place-items:center;font-size:64px;border-radius:12px;background:var(--surface-2)}
+    .pname{font-size:13px;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:44px}
+    .prow{display:flex;align-items:center;justify-content:space-between}
+    .stars{color:#f7a600;font-size:12px;font-weight:700}
+    .old-price{text-decoration:line-through;color:var(--muted);font-size:12px}
+    .final-price{font-size:15px;font-weight:900}
+    .add-btn{margin-top:auto;width:100%;padding:9px;border-radius:10px;background:var(--brand-light);
+      color:var(--brand);font-weight:800;font-size:13px;transition:.2s}
+    .add-btn:hover{background:var(--brand);color:#fff}
+    .fav{position:absolute;top:10px;left:10px;font-size:18px;opacity:.5}
+    .fav.on{opacity:1}
+
+    /* ===================== Cart Drawer & Modal ===================== */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:.3s;z-index:90}
+    .overlay.show{opacity:1;pointer-events:auto}
+    .drawer{position:fixed;top:0;left:0;bottom:0;width:min(400px,92vw);background:var(--surface);z-index:100;
+      transform:translateX(-105%);transition:.35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;
+      border-radius:0 18px 18px 0;box-shadow:var(--shadow-lg)}
+    .drawer.open{transform:none}
+    .drawer-head{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid var(--line);font-weight:900;font-size:16px}
+    .cart-items{flex:1;overflow-y:auto;padding:12px}
+    .cart-item{display:flex;gap:10px;padding:12px;border-bottom:1px dashed var(--line);align-items:center}
+    .ci-img{font-size:34px;width:56px;height:56px;display:grid;place-items:center;background:var(--surface-2);border-radius:10px}
+    .qty{display:flex;align-items:center;gap:8px}
+    .qty button{width:26px;height:26px;border-radius:8px;background:var(--brand-light);color:var(--brand);font-weight:900}
+    .drawer-foot{padding:16px;border-top:1px solid var(--line)}
+    .sum-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px}
+    .sum-total{font-weight:900;font-size:16px;color:var(--brand)}
+    .modal{position:fixed;inset:0;display:grid;place-items:center;z-index:110;opacity:0;pointer-events:none;transition:.25s}
+    .modal.show{opacity:1;pointer-events:auto}
+    .modal-box{background:var(--surface);border-radius:18px;width:min(440px,92vw);max-height:86vh;overflow-y:auto;
+      padding:20px;transform:scale(.9);transition:.25s}
+    .modal.show .modal-box{transform:none}
+    .field{margin-bottom:12px}
+    .field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px;color:var(--muted)}
+    .field input{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);
+      background:var(--surface-2);color:var(--text);outline:none;font-size:13px}
+    .field input:focus{border-color:var(--brand)}
+    .otp-row input{letter-spacing:6px;text-align:center;font-weight:900;font-size:18px}
+
+    /* Toast */
+    .toast{position:fixed;bottom:90px;right:50%;transform:translate(50%,20px);background:#1f2937;color:#fff;
+      padding:12px 22px;border-radius:12px;font-weight:700;opacity:0;transition:.3s;z-index:130;white-space:nowrap;box-shadow:var(--shadow-lg)}
+    .toast.show{opacity:1;transform:translate(50%,0)}
+
+    /* Footer */
+    footer{margin-top:40px;background:var(--surface);border-top:1px solid var(--line);padding:30px 0 90px}
+    .foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px}
+    .foot-grid h4{margin-bottom:10px;font-size:14px}
+    .foot-grid a{display:block;color:var(--muted);font-size:12.5px;margin-bottom:6px;cursor:pointer}
+    .trust{display:flex;gap:14px;margin-top:20px;flex-wrap:wrap}
+    .trust div{width:74px;height:74px;border-radius:14px;border:1px dashed var(--line);display:grid;place-items:center;font-size:30px}
+
+    /* Mobile bottom nav */
+    .bottom-nav{display:none;position:fixed;bottom:0;inset-inline:0;background:var(--surface);
+      border-top:1px solid var(--line);z-index:60;padding:6px 0 calc(6px + env(safe-area-inset-bottom))}
+    .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;
+      font-weight:700;color:var(--muted);padding:6px 0}
+    .bn-item.on{color:var(--brand)}
+    .bn-item .emoji{font-size:20px}
+
+    /* Responsive: mobile polish */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .side-promo{grid-template-columns:1fr 1fr}
+      .promo-mini{min-height:100px;font-size:13px}
+    }
+    @media (max-width:640px){
+      .menu-btn{display:grid}
+      .search-desk{order:5;flex-basis:100%}
+      .topbar-inner{flex-wrap:wrap}
+      .bottom-nav{display:flex}
+      .grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+      .pimg{height:110px;font-size:48px}
+      .pname{font-size:12px;min-height:38px}
+      .final-price{font-size:13.5px}
+      .slider{height:180px}
+      .slide{font-size:17px;line-height:1.9}
+      .cats{grid-template-columns:repeat(4,1fr)}
+      .desktop-only{display:none!important}
+      footer{padding-bottom:100px}
+    }
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+    .flash-icon{animation:pulse 1.2s infinite}
+  </style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<div class="topbar">
+  <div class="container topbar-inner">
+    <button class="icon-btn menu-btn" onclick="toggleCats()">☰</button>
+    <a class="logo" href="#">🛒 دیجی‌<span style="color:var(--text)">مارکت</span></a>
+    <div class="search search-desk">
+      <input id="searchInput" placeholder="جستجو در بیش از ۲ میلیون کالا..." oninput="renderProducts()" />
+      <button title="جستجو">🔍</button>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn desktop-only" onclick="openModal('loginModal')">👤</button>
+      <button class="icon-btn" onclick="toggleTheme()" title="حالت شب/روز">🌙</button>
+      <button class="icon-btn" onclick="openCart()">🛍️<span class="count-dot" id="cartCount">0</span></button>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="slider" id="slider">
+      <div class="slide s1 active">🔥 جشنواره فروش فوق‌العاده<br>تا ۷۰٪ تخفیف</div>
+      <div class="slide s2">📱 موبایل‌فستی! جدیدترین گوشی‌ها<br>با ارسال رایگان</div>
+      <div class="slide s3">💻 لپ‌تاپ و کامپیوتر<br>مشاوره رایگان + گارانتی ۱۸ ماهه</div>
+      <div class="slider-nav" id="dots"></div>
+    </div>
+    <aside class="side-promo">
+      <div class="promo-mini pm1"><span>⚡ سوپرمارکت</span><span>خرید روزانه با ارسال فوری</span></div>
+      <div class="promo-mini pm2"><span>🎁 باشگاه مشتریان</span><span>جایزه امتیاز خریدهایت!</span></div>
+    </aside>
+  </section>
+
+  <!-- ============ CATEGORIES ============ -->
+  <nav class="card cats" id="catsBar"></nav>
+
+  <!-- ============ FLASH SALE ============ -->
+  <section class="flash">
+    <div class="flash-head">
+      <div class="flash-title"><span class="flash-icon">⚡</span> فروش شعله‌ور — تا پایان:</div>
+      <div class="timer"><span id="th">08</span>:<span id="tm">24</span>:<span id="ts">59</span></div>
+    </div>
+    <div class="flash-scroll" id="flashRow"></div>
+  </section>
+
+  <!-- ============ PRODUCTS ============ -->
+  <section>
+    <div class="section-head"><h2>پیشنهاد ویژه 🔥</h2><a class="see-all">مشاهده همه ←</a></div>
+    <div class="toolbar">
+      <button class="chip on" data-cat="all" onclick="filterCat(this)">همه</button>
+      <span id="catChips" style="display:flex;gap:8px;flex-wrap:wrap"></span>
+      <select id="sortSel" onchange="renderProducts()">
+        <option value="pop">مرتب‌سازی: محبوب‌ترین</option>
+        <option value="cheap">ارزان‌ترین</option>
+        <option value="exp">گران‌ترین</option>
+        <option value="off">بیشترین تخفیف</option>
+        <option value="rate">بالاترین امتیاز</option>
+      </select>
+    </div>
+    <div class="grid" id="productGrid"></div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="container foot-grid">
+      <div><h4>با دیجی‌مارکت</h4><a>اتاق خبر</a><a>فرصت‌های شغلی</a><a>گزارش تخلف</a><a>تماس با ما</a></div>
+      <div><h4>خدمات مشتریان</h4><a>پاسخ به پرسش‌ها</a><a>رویه بازگرداندن کالا</a><a>شرایط استفاده</a><a>حریم خصوصی</a></div>
+      <div><h4>راهنمای خرید</h4><a>نحوه ثبت سفارش</a><a>رویه ارسال سفارش</a><a>شیوه‌های پرداخت</a></div>
+      <div><h4>نماد اعتماد</h4><div class="trust"><div>🛡️</div><div>✅</div><div>💳</div></div></div>
+    </div>
+    <p style="text-align:center;color:var(--muted);margin-top:24px;font-size:12px">
+      © ۱۴۰۵ دیجی‌مارکت — نمونه وب‌اپ فروشگاهی، تمام حقوق محفوظ است.
+    </p>
+  </footer>
+</main>
+
+<!-- ============ MOBILE BOTTOM NAV ============ -->
+<nav class="bottom-nav">
+  <a class="bn-item on" href="#"><span class="emoji">🏠</span>خانه</a>
+  <button class="bn-item" onclick="document.getElementById('searchInput').focus()"><span class="emoji">🔍</span>جستجو</button>
+  <button class="bn-item" onclick="openCart()"><span class="emoji">🛍️</span>سبد خرید</button>
+  <button class="bn-item" onclick="openModal('loginModal')"><span class="emoji">👤</span>ورود</button>
+</nav>
+
+<!-- ============ CART DRAWER ============ -->
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
+<aside class="drawer" id="cartDrawer">
+  <div class="drawer-head">🛍️ سبد خرید <button class="icon-btn" onclick="closeAll()">✕</button></div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="sum-row"><span>جمع کالاها:</span><b id="sumGoods"></b></div>
+    <div class="sum-row" style="color:var(--brand)"><span>تخفیف شما:</span><b id="sumOff"></b></div>
+    <div class="sum-row"><span>هزینه ارسال:</span><b style="color:var(--ok)">رایگان 🎉</b></div>
+    <div class="sum-row sum-total"><span>مبلغ قابل پرداخت:</span><span id="sumFinal"></span></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:10px" onclick="checkout()">ثبت سفارش و پرداخت</button>
+  </div>
+</aside>
+
+<!-- ============ LOGIN MODAL (OTP style) ============ -->
+<div class="modal" id="loginModal">
+  <div class="modal-box card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3 style="font-weight:900">ورود | ثبت‌نام</h3>
+      <button class="icon-btn" onclick="closeAll()">✕</button>
+    </div>
+    <div class="field"><label>شماره موبایل</label>
+      <input id="phoneInput" maxlength="11" placeholder="09xxxxxxxxx" inputmode="numeric" /></div>
+    <button class="btn btn-primary" style="width:100%" onclick="sendOtp()">دریافت کد تأیید</button>
+    <div id="otpBox" style="display:none;margin-top:16px">
+      <div class="field"><label>کد ۴ رقمی را وارد کنید (رمز نمونه: 1234)</label>
+        <div class="otp-row"><input maxlength="4" id="otpInput" inputmode="numeric" placeholder="— — — —"/></div></div>
+      <button class="btn btn-outline" style="width:100%" onclick="verifyOtp()">ورود</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:14px">
+      با ورود شما، موافقت با شرایط و قوانین تلقی می‌شود. 🔒
+    </p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= Data ================= */
+const CATS=[["all","🛍️","همه"],["mobile","📱","موبایل"],["laptop","💻","لپ‌تاپ"],["audio","🎧","صوتی"],["fashion","👟","مد پوشاک"],["home","🏠","خانه آشپزخانه"],["beauty","💄","آرایشی"],["grocery","🥦","سوپرمارکت"],["game","🎮","کتاب بازی"]];
+const PRODUCTS=[
+ {id:1,t:"آیفون 15 پرو مکس 256 گیگ",c:"mobile",im:"📱",pr:48990000,old:52000000,r:4.6,s:1240,pop:99},
+ {id:2,t:"گلکسی S24 اولترا 512 گیگ",c:"mobile",im:"📱",pr:56500000,old:61000000,r:4.7,s:980,pop:97},
+ {id:3,t:"هدفون بی‌سیم ساوندکیر Q45",c:"audio",im:"🎧",pr:1890000,old:2400000,r:4.3,s:540,pop:80},
+ {id:4,t:"لپ‌تاپ گیمینگ ASUS ROG Strix",c:"laptop",im:"💻",pr:72000000,old:79000000,r:4.8,s:310,pop:90},
+ {id:5,t:"کفش رانینگ نایکی ایر زوم",c:"fashion",im:"👟",pr:3450000,old:4200000,r:4.2,s:760,pop:70},
+ {id:6,t:"قهوه‌ساز اتوماتیک دلونگی",c:"home",im:"☕",pr:12900000,old:15500000,r:4.5,s:220,pop:60},
+ {id:7,t:"کرم ضدآفتاب SPF50 رنگی",c:"beauty",im:"🧴",pr:420000,old:520000,r:4.4,s:1500,pop:75},
+ {id:8,t:"ساعت هوشمند اپل واچ سری 9",c:"mobile",im:"⌚",pr:9800000,old:11200000,r:4.6,s:430,pop:88},
+ {id:9,t:"پکیج چای و قهوه ویژه",c:"grocery",im:"🍵",pr:650000,old:800000,r:4.1,s:340,pop:50},
+ {id:10,t:"کنسول بازی PS5 اسلیم",c:"game",im:"🎮",pr:26500000,old:29000000,r:4.9,s:890,pop:95},
+ {id:11,t:"جاروبرقی رباتیک شیائومی",c:"home",im:"🤖",pr:8900000,old:10900000,r:4.3,s:410,pop:66},
+ {id:12,t:"تبلت گلکسی تب S9 FE",c:"mobile",im:"📲",pr:23500000,old:25900000,r:4.5,s:260,pop:72},
+ {id:13,t:"اسپیکر بلوتوثی JBL Flip 6",c:"audio",im:"🔊",pr:2750000,old:3300000,r:4.4,s:620,pop:78},
+ {id:14,t:"کیف چرم مردانه دست‌دوز",c:"fashion",im:"👜",pr:1650000,old:2100000,r:4.2,s:150,pop:40},
+];
+let cart=JSON.parse(localStorage.getItem("cart")||"[]"),
+    favs=JSON.parse(localStorage.getItem("favs")||"[]"), curCat="all";
+
+/* ================= Helpers ================= */
+const fmt=n=>n.toLocaleString("fa-IR")+" تومان";
+const $=id=>document.getElementById(id);
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove("show"),2200);}
+function offPct(p){return Math.round((1-p.pr/p.old)*100);}
+
+/* ================= Render ================= */
+$("catsBar").innerHTML=CATS.slice(1).map(c=>`<a class="cat" onclick="setCat('${c[0]}')"><span class="emoji">${c[1]}</span>${c[2]}</a>`).join("");
+$("catChips").innerHTML=CATS.slice(1).map(c=>`<button class="chip" data-cat="${c[0]}" onclick="filterCat(this)">${c[1]} ${c[2]}</button>`).join("");
+
+function cardHTML(p){
+  const off=offPct(p), fav=favs.includes(p.id);
+  return `<article class="card pcard" onclick="toast('صفحه جزئیات: ${p.t}')">
+    <button class="fav ${fav?'on':''}" onclick="event.stopPropagation();toggleFav(${p.id},this)">${fav?'❤️':'🤍'}</button>
+    <div class="pimg">${p.im}</div>
+    <div class="pname">${p.t}</div>
+    <div class="prow"><span class="stars">★ ${p.r.toLocaleString("fa")} (${p.s.toLocaleString("fa")} نظر)</span>
+      ${off?`<span class="badge badge-red">${off.toLocaleString("fa")}٪</span>`:""}</div>
+    <div class="prow"><span class="old-price">${p.old.toLocaleString("fa")}</span><span class="price-off">${fmt(p.pr)}</span></div>
+    <button class="add-btn" onclick="event.stopPropagation();addToCart(${p.id})">+ افزودن به سبد</button>
+  </article>`;
+}
+function renderProducts(){
+  const q=$("searchInput").value.trim(), sort=$("sortSel").value;
+  let list=PRODUCTS.filter(p=>(curCat==="all"||p.c===curCat)&&(!q||p.t.includes(q)));
+  const cmp={pop:(a,b)=>b.pop-a.pop,cheap:(a,b)=>a.pr-b.pr,exp:(a,b)=>b.pr-a.pr,off:(a,b)=>offPct(b)-offPct(a),rate:(a,b)=>b.r-a.r}[sort];
+  list.sort(cmp);
+  $("productGrid").innerHTML=list.map(cardHTML).join("")||`<p style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px">❌ کالایی یافت نشد</p>`;
+  $("flashRow").innerHTML=PRODUCTS.filter(p=>offPct(p)>=15).slice(0,8).map(cardHTML).join("");
+}
+function filterCat(el){
+  document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
+  el.classList.add("on"); curCat=el.dataset.cat; renderProducts();
+}
+function setCat(c){const chip=document.querySelector(`.chip[data-cat="${c}"]`)||document.querySelector('.chip[data-cat="all"]');filterCat(chip);}
+
+/* ================= Cart ================= */
+function addToCart(id){
+  const it=cart.find(x=>x.id===id);
+  it?it.q++:cart.push({id,q:1});
+  localStorage.setItem("cart",JSON.stringify(cart)); updateBadge();
+  toast("✅ به سبد خرید اضافه شد");
+}
+function toggleFav(id,el){
+  favs.includes(id)?favs=favs.filter(f=>f!==id):favs.push(id);
+  localStorage.setItem("favs",JSON.stringify(favs));
+  el.textContent=favs.includes(id)?"❤️":"🤍"; el.classList.toggle("on");
+}
+function updateBadge(){ $("cartCount").textContent=cart.reduce((a,b)=>a+b.q,0).toLocaleString("fa"); }
+function openCart(){ renderCart(); $("overlay").classList.add("show"); $("cartDrawer").classList.add("open"); }
+function closeAll(){ $("overlay").classList.remove("show"); $("cartDrawer").classList.remove("open");
+  document.querySelectorAll(".modal").forEach(m=>m.classList.remove("show")); }
+function changeQty(id,d){
+  const it=cart.find(x=>x.id===id); it.q+=d;
+  if(it.q<=0) cart=cart.filter(x=>x.id!==id);
+  localStorage.setItem("cart",JSON.stringify(cart)); renderCart(); updateBadge();
+}
+function renderCart(){
+  const box=$("cartItems");
+  if(!cart.length){box.innerHTML=`<div style="text-align:center;padding:50px 20px;color:var(--muted)"><div style="font-size:56px">🛒</div><p style="margin-top:10px;font-weight:700">سبد خرید شما خالی است!</p></div>`;}
+  else box.innerHTML=cart.map(ci=>{const p=PRODUCTS.find(x=>x.id===ci.id);return `
+    <div class="cart-item"><div class="ci-img">${p.im}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:12.5px">${p.t}</div>
+      <div style="color:var(--brand);font-weight:900;font-size:13px">${fmt(p.pr)}</div></div>
+      <div class="qty"><button onclick="changeQty(${p.id},1)">+</button><b>${ci.q.toLocaleString("fa")}</b>
+      <button onclick="changeQty(${p.id},-1)">−</button></div>
+    </div>`;}).join("");
+  const goods=cart.reduce((a,ci)=>a+PRODUCTS.find(x=>x.id===ci.id).old*ci.q,0);
+  const final=cart.reduce((a,ci)=>a+PRODUCTS.find(x=>x.id===ci.id).pr*ci.q,0);
+  $("sumGoods").textContent=fmt(goods); $("sumOff").textContent="−"+fmt(goods-final); $("sumFinal").textContent=fmt(final);
+}
+function checkout(){
+  if(!cart.length)return toast("سبد خرید خالی است!");
+  cart=[];localStorage.setItem("cart","[]");updateBadge();renderCart();closeAll();
+  toast("🎉 سفارش شما ثبت شد! کد رهگیری: DG-"+Math.floor(Math.random()*9e7+1e7));
+}
+
+/* ================= Login OTP ================= */
+function openModal(id){$(id).classList.add("show");$("overlay").classList.add("show");}
+function sendOtp(){
+  const ph=$("phoneInput").value;
+  if(!/^09\d{9}$/.test(ph))return toast("شماره موبایل معتبر نیست ❌");
+  $("otpBox").style.display="block"; toast("📩 کد تأیید ارسال شد (رمز: 1234)");
+}
+function verifyOtp(){
+  if($("otpInput").value==="1234"){closeAll();toast("✅ خوش آمدید! ۰"+$("phoneInput").value.slice(-4)+" عزیز");}
+  else toast("کد اشتباه است ❌");
+}
+
+/* ================= Theme / Slider / Timer ================= */
+function toggleTheme(){
+  const d=document.documentElement.dataset.theme==="dark";
+  document.documentElement.dataset.theme=d?"light":"dark";
+  localStorage.setItem("theme",d?"light":"dark");
+}
+if(localStorage.getItem("theme"))document.documentElement.dataset.theme=localStorage.getItem("theme");
+function toggleCats(){const c=$("catsBar");c.style.display=c.style.display==="none"?"grid":"none";}
+
+const slides=document.querySelectorAll(".slide");let si=0;
+$("dots").innerHTML=[...slides].map((_,i)=>`<div class="dot ${i?'':'on'}" onclick="goSlide(${i})"></div>`).join("");
+function goSlide(i){slides[si].classList.remove("active");document.querySelectorAll(".dot")[si].classList.remove("on");
+  si=i;slides[si].classList.add("active");document.querySelectorAll(".dot")[si].classList.add("on");}
+setInterval(()=>goSlide((si+1)%slides.length),4500);
+
+let end=Date.now()+8*3600e3+24*60e3;
+setInterval(()=>{const d=Math.max(0,end-Date.now());
+  $("th").textContent=String(Math.floor(d/36e5)).padStart(2,"0");
+  $("tm").textContent=String(Math.floor(d/6e4)%60).padStart(2,"0");
+  $("ts").textContent=String(Math.floor(d/1e3)%60).padStart(2,"0");},1000);
+
+/* swipe on slider (mobile) */
+let tx=0;$("slider").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+$("slider").addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>50)goSlide((si+(dx<0?1:slides.length-1))%slides.length);});
+
+updateBadge(); renderProducts();
+</script>
+</body>
+</html>
